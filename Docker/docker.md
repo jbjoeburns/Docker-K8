@@ -4,9 +4,13 @@ Docker is a service that provides users with pre-provisioned images containing t
 
 These images are called **containers**, and will have everything required to run what is being tested. So for example, if you were tesing a web application, you can download and run an image containing nginx in a fresh environment to ensure everything is working correctly.
 
+![Alt text](image-1.png)
+
 # What are microservices and why use them?
 
 Microservices is an approach to cloud archetecture where instead of a single application and all it's components being a single indivisible service, a **monolithic archetecture**. Microservices instead are components of a larger application that are able to be ran independently, but combined as a whole comprise the entire application.
+
+![Alt text](image-2.png)
 
 **Docker containers are an example of a microservice.**
 
@@ -30,6 +34,8 @@ https://aws.amazon.com/microservices/
 - The download link can be found here: https://www.docker.com/products/docker-desktop/
 
 2. We then opened Git Bash and verify the install was successful, using `docker --version`
+
+![Alt text](image.png)
 
 3. Once this is done, we then logged in to our Docker account in the Git Bash terminal with `docker login -u <username>`
 
