@@ -61,3 +61,33 @@ Docker has a wide range of default container images. We will be using the one fo
 6. Then we push this as an image using `docker push <username>/<repo name>:<tag name>`
 
 7. Once we were done, we used `docker stop <ID>` to stop the process and `docker rm <id>` removes the image.
+
+# Building an image
+
+To build an image in Docker, first we need to make a Dockerfile. This essentially functions like userdata to create an image from.
+
+With this we take the nginx image publically available on Dockerhub, then build our own image from it.
+
+The syntax is similar to SQL with commands in CAPS followed by what you want it to do. So, for example `COPY <local file> <destination>` will copy a file from our local destination to our image, like scp with linux.
+
+Create a dockerfile
+```
+# from which image
+FROM nginx
+
+# what to copy into the container from localhost - index.html
+COPY index.html /usr/share/nginx/html/
+
+# open to port 80
+EXPOSE 80
+
+# CMD specific instructions
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+Then we cd into the file with our Dockerfile and run `docker build -t <username>/<buildname> .` to build an image using this Dockerfile like userdata.
+
+Then we can run this and we'll see that it works.
+
+![Alt text](image-3.png)
+
