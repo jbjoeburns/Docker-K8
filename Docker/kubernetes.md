@@ -20,7 +20,7 @@ K8 is used to build cloud microservice based apps. It's use of many containers a
 
 ![Alt text](image-7.png)
 
-K8 works by essentially deploying 'pods' which contain copies of your contiainer.
+K8 works by essentially deploying 'pods' which contain copies of your contiainer. These pods serve the same functions as ASGs, in the sense that if one is disrupted, others will be available to divert traffic to, and they can also help manage load when site traffic is too high for one pod to handle, however the load balancer is made automatically.
 
 ### When not to use K8
 
