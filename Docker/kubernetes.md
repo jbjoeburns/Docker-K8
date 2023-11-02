@@ -95,9 +95,63 @@ When we get our services, we should see the following.
 
 ![Alt text](image-10.png)
 
-And we should be able to connect via port 30080.
+And we should be able to connect via port 30080. The range for nodePort is **30000-32767**.
 
 ![Alt text](image-11.png)
+
+This can also be done for our node app using.
+
+node-service.yml
+```
+apiVersion: v1
+kind: Service # defines this as a service
+metadata:
+  name: node-service
+spec:
+  selector:
+    app: node # looks for this label to make k8 service
+  ports:
+  - name: node-port
+    protocol: TCP
+    port: 3000 # what port on the pod do we want to access with nodePort?
+    nodePort: 30030 # we need this in order to access our pod, we connect via port 30030 and this will display port 3000 from our pod
+  type: NodePort
+```
+
+node-deploy.yml
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-deployment # name of the deployment
+spec:
+  selector:
+    matchLabels:
+      app: node # looks for this label to make k8 service
+  replicas: 3 # 3 pods
+  template:
+    metadata:
+      labels:
+        app: node # this label connects to the service/any other k8 components (name of pods)
+    spec: # defining container specs
+      containers:
+      - name: node # name of container we'll give it
+        image: joeburnsjb2/tech254-2tier-app-container:latest # name of image we're using to make containers in pods
+        ports:
+        - containerPort: 3000 # what port will we open for our container?
+```
+
+**However** it is best practice to edit current deployments when changing things in your .yml file, rather than stopping and redeploying, as this will interfere with user experience due to downtime. 
+
+To edit a deployment, use `kubectl edit deploy <name>`, which will pop up with a .txt you can edit and changes will be made, ensuring no downtime.
+
+![Alt text](image-12.png)
+
+So, in our case, we wanted to change our deploy to our node app rather than nginx. We would want to use `kubectl create -f node-deploy.yml` to deploy our app on the same container cluster, then use `kubectl edit service nginx-service.yml` and change it to match our *node-service.yml* as outlined above.
+
+Then, on port 30030 we'll see our app is deployed successfully with zero downtime!
+
+![Alt text](image-13.png)
 
 # Useful commands
 

@@ -1,0 +1,17 @@
+apiVersion: v1
+# defines this as a service
+kind: Service 
+metadata:
+  name: node-service
+spec:
+  selector:
+    # looks for this label to make k8 service
+    app: node 
+  ports:
+  - name: node-port
+    protocol: TCP
+    # what port on the pod do we want to access with nodePort?
+    port: 3000 
+    # we connect to node port 3000 via port 30030
+    nodePort: 30030 
+  type: NodePort
