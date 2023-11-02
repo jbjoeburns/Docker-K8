@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service # defines this as a service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx # looks for this label to make k8 service
+  ports:
+  - name: nginx-port
+    protocol: TCP
+    port: 80 # what port on the pod do we want to access with nodePort?
+    nodePort: 30080 # we need this in order to access our pod, we connect via port 30080 and this will display port 80 from our pod
+  type: NodePort

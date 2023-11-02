@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment # name of the deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx # looks for this label to make k8 service
+  replicas: 3 # 3 pods
+  template:
+    metadata:
+      labels:
+        app: nginx # this label connects to the service/any other k8 components (name of pods)
+    spec: # defining container specs
+      containers:
+      - name: nginx # name of container we'll give it
+        image: joeburnsjb2/nginx:latest # name of image we're using to make containers in pods
+        ports:
+        - containerPort: 80 # what port will we open for our container?
