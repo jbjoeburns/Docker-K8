@@ -6,7 +6,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   # name of the deployment
-  name: mongo-deployment 
+  name: mongo-deploy 
 spec:
   selector:
     matchLabels:
@@ -30,7 +30,7 @@ spec:
       volumes:
       - name: storage
         persistentVolumeClaim:
-          claimName: mongo-db
+          claimName: mongo-pv
 
 ---
 # Mongo Service
@@ -54,50 +54,32 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mongo-db
+  name: mongo-pv
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 256Mi
+      storage: 300Mi
 
 ---
-# Node Deployment
+# ASG
 
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
 metadata:
-  # name of the deployment
-  name: node-deployment 
+  name: nodeasg
 spec:
-  selector:
-    matchLabels:
-      # looks for this label to make k8 service
-      app: node 
-  replicas: 3 # 3 pods
-  template:
-    metadata:
-      labels:
-        # this label connects to the service/any other k8 components (name of pods)
-        app: node 
-    spec: # defining container specs
-      containers:
-      # name of container we'll give it
-      - name: node 
-        # name of image we're using to make containers in pods
-        image: joeburnsjb2/tech254-2tier-app-container:latest 
-        ports:
-        # what port will we open for our container?
-        - containerPort: 3000 
-        env:
-        - name: DB_HOST
-          value: mongodb://10.100.143.10:27017/posts
-          #command: ["/bin/sh","-c"]
-          #args: ["node seeds/seed.js"]
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: node
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 50
 
 ---
-# Node Service
+# Load Balancer
 
 apiVersion: v1
 # defines this as a service
@@ -109,10 +91,9 @@ spec:
     # looks for this label to make k8 service
     app: node 
   ports:
-  - name: node-port
-    protocol: TCP
+    - protocol: TCP
     # what port on the pod do we want to access with nodePort?
-    port: 3000 
+      port: 3000 
     # we connect to node port 3000 via port 30030
-    nodePort: 30030 
-  type: NodePort
+      targetPort: 3000
+  type: LoadBalancer

@@ -153,6 +153,23 @@ Then, on port 30030 we'll see our app is deployed successfully with zero downtim
 
 ![Alt text](image-13.png)
 
+**Additionally**, I created a pipeline here to run the entire setup for my k8 cluster. All you need to do is run **deploy-all.yml**.
+
+This does the following...
+1. Deploys container with MongoDB.
+2. Creates service with port 27017 open, so database can be accessed.
+3. Makes a persistant volume, so that if the database goes down the data is backed up.
+4. Creates an auto-scaler to handle traffic by making more containers.
+5. Creates load balancer to route that traffic.
+
+Then run node-deploy.yml which deploys container with application.
+
+This automatically sets up a fully funcitonal app and database.
+
+![Alt text](image-14.png)
+
+### .yml files are available [**HERE**](k8-app/)
+
 # Useful commands
 
 `kubectl get svc` will list all K8 services.
@@ -164,3 +181,14 @@ Then, on port 30030 we'll see our app is deployed successfully with zero downtim
 `kubectl create -f <name of yaml>` runs based off specifications in yaml file.
 
 `kubectl get rs` will list all replica sets.
+
+# Useful variables in .yml files
+
+For executing commands after a pod is launched, use `lifecycle`
+```
+lifecycle:
+  postStart:
+    exec:
+      command: ["/bin/sh","-c",node seeds/seed.js]
+
+```

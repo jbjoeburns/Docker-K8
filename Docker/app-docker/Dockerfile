@@ -15,6 +15,8 @@ EXPOSE 3000
 
 # CMD specific instructions
 RUN npm install
+RUN npm remove mongoose
+RUN npm install mongoose@4.10.8 --save
 RUN node seeds/seed.js
 RUN pm2 start app.js
 CMD ["node", "app.js"]

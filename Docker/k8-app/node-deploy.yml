@@ -1,8 +1,10 @@
+# Deploy app
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   # name of the deployment
-  name: node-deployment 
+  name: node-deployment
 spec:
   selector:
     matchLabels:
@@ -25,6 +27,8 @@ spec:
         - containerPort: 3000 
         env:
         - name: DB_HOST
-          value: mongodb://10.100.143.10:27017/posts
-        #command: ["/bin/sh","-c"]
-        #args: ["node seeds/seed.js"]
+          value: mongodb://localhost:27017/posts
+        lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh","-c",node seeds/seed.js]
