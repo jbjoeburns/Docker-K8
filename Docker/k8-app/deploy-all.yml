@@ -1,0 +1,118 @@
+
+---
+# Mongo Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # name of the deployment
+  name: mongo-deployment 
+spec:
+  selector:
+    matchLabels:
+      # looks for this label to make k8 service
+      app: mongo 
+  replicas: 3 # 3 pods
+  template:
+    metadata:
+      labels:
+        # this label connects to the service/any other k8 components (name of pods)
+        app: mongo 
+    spec: # defining container specs
+      containers:
+      # name of container we'll give it
+      - name: mongo 
+        # name of image we're using to make containers in pods
+        image: joeburnsjb2/tech254-2tier-db-container:latest 
+        ports:
+        # what port will we open for our container?
+        - containerPort: 27017
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: mongo-db
+
+---
+# Mongo Service
+
+apiVersion: v1
+# defines this as a service
+kind: Service 
+metadata:
+  name: mongo
+spec:
+  selector:
+    # looks for this label to make k8 service
+    app: mongo 
+  ports:
+  - port: 27017
+    targetPort: 27017
+
+---
+# Mongo pvol
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-db
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+
+---
+# Node Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # name of the deployment
+  name: node-deployment 
+spec:
+  selector:
+    matchLabels:
+      # looks for this label to make k8 service
+      app: node 
+  replicas: 3 # 3 pods
+  template:
+    metadata:
+      labels:
+        # this label connects to the service/any other k8 components (name of pods)
+        app: node 
+    spec: # defining container specs
+      containers:
+      # name of container we'll give it
+      - name: node 
+        # name of image we're using to make containers in pods
+        image: joeburnsjb2/tech254-2tier-app-container:latest 
+        ports:
+        # what port will we open for our container?
+        - containerPort: 3000 
+        env:
+        - name: DB_HOST
+          value: mongodb://10.100.143.10:27017/posts
+          #command: ["/bin/sh","-c"]
+          #args: ["node seeds/seed.js"]
+
+---
+# Node Service
+
+apiVersion: v1
+# defines this as a service
+kind: Service 
+metadata:
+  name: node-service
+spec:
+  selector:
+    # looks for this label to make k8 service
+    app: node 
+  ports:
+  - name: node-port
+    protocol: TCP
+    # what port on the pod do we want to access with nodePort?
+    port: 3000 
+    # we connect to node port 3000 via port 30030
+    nodePort: 30030 
+  type: NodePort

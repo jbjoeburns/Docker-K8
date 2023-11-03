@@ -14,6 +14,6 @@ spec:
     spec: # defining container specs
       containers:
       - name: nginx # name of container we'll give it
-        image: joeburnsjb2/nginx:latest # name of image we're using to make containers in pods
+        image: joeburnsjb2/nginx254:latest # name of image we're using to make containers in pods
         ports:
         - containerPort: 80 # what port will we open for our container?

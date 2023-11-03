@@ -1,0 +1,12 @@
+apiVersion: v1
+# defines this as a service
+kind: Service 
+metadata:
+  name: mongo
+spec:
+  selector:
+    # looks for this label to make k8 service
+    app: mongo 
+  ports:
+  - port: 27017
+    targetPort: 27017

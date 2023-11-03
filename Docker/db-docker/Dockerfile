@@ -1,7 +1,7 @@
 # Dockerfile to setup mongodb
 
 # from which image
-FROM mongo:3.2
+FROM mongo:4.4
 
 # copy edited config file
 COPY mongod.conf ./etc

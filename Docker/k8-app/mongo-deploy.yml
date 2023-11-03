@@ -2,29 +2,28 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   # name of the deployment
-  name: node-deployment 
+  name: mongo-deployment 
 spec:
   selector:
     matchLabels:
       # looks for this label to make k8 service
-      app: node 
+      app: mongo 
   replicas: 3 # 3 pods
   template:
     metadata:
       labels:
         # this label connects to the service/any other k8 components (name of pods)
-        app: node 
+        app: mongo 
     spec: # defining container specs
       containers:
       # name of container we'll give it
-      - name: node 
+      - name: mongo 
         # name of image we're using to make containers in pods
-        image: joeburnsjb2/tech254-2tier-app-container:latest 
+        image: joeburnsjb2/tech254-2tier-db-container:latest 
         ports:
         # what port will we open for our container?
-        - containerPort: 3000 
-        env:
-        - name: DB_HOST
-          value: mongodb://10.100.143.10:27017/posts
-        #command: ["/bin/sh","-c"]
-        #args: ["node seeds/seed.js"]
+        - containerPort: 27017
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: mongo-db
